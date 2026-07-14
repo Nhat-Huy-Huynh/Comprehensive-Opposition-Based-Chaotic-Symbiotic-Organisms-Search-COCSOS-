@@ -23,30 +23,6 @@ The code is associated with the paper:
 
 ---
 
-## 1. Overview
-
-The program applies the proposed **COCSOS** algorithm to optimize relay settings while satisfying primary–backup coordination constraints.
-
-The uploaded source file currently implements the **VI case**, as indicated by:
-
-```python
-def time_operation(TDS, Ipickup, I):
-    ratio = I / Ipickup
-    if ratio >= 20:
-        ratio = 20
-    return TDS * (13.5 / (ratio**1 - 1))
-```
-
-and:
-
-```python
-function_name = "COCSOS_VI_110kV"
-```
-
-The NI, EI, Adaptive, and Hybrid cases should be executed using their corresponding validated source-code versions.
-
----
-
 ## 2. Problem data
 
 The current implementation contains:
@@ -67,20 +43,6 @@ The current implementation contains:
 | Independent runs in the supplied code | 20 |
 | CO application probability | 0.4 |
 | Chaotic local-search trials | 20 |
-
-The fixed NI, VI, and EI cases use:
-
-\[
-\mathbf{x}=
-[TDS_1,\ldots,TDS_{90},
-PS_1,\ldots,PS_{90}]
-\]
-
-with:
-
-\[
-\dim(\mathbf{x})=2D=180.
-\]
 
 ---
 
@@ -104,30 +66,38 @@ bounds = (0.05, 3)
 
 Each relay has its own PS lower and upper bounds. The complete 90-element bound vectors are embedded in the `COCSOS()` function.
 
-The relay pickup current is:
-
-\[
-I_{\mathrm{pickup},i}=CT_iPS_i
-\]
-
-with:
-
-\[
-CT_i=1200.
-\]
-
-PS values are quantized to five decimal places:
-
 ```python
-ps_quant = np.clip(
-    np.round(ps_cont * 100000) / 100000,
-    ps_lb,
-    ps_ub
-)
+lb = [                      0.340, 0.340, 0.533, 0.533, 0.800, 0.800,
+                            0.407, 0.407, 0.800, 0.800, 0.800, 0.800,
+                            0.800, 0.800, 0.800, 0.800, 0.800, 0.800,
+                            0.800, 0.800, 0.407, 0.407, 0.407, 0.407,
+                            0.800, 0.800, 0.800, 0.800, 0.800, 0.800,
+                            0.800, 0.800, 0.800, 0.100, 0.800, 0.800,
+                            0.100, 0.800, 0.800, 0.800, 0.800, 0.800,
+                            0.800, 0.800, 0.800, 0.800, 0.340, 0.340,
+                            0.533, 0.533, 0.340, 0.340, 0.533, 0.533,
+                            0.340, 0.340, 0.340, 0.340, 0.340, 0.340,
+                            0.340, 0.340, 0.340, 0.340, 0.533, 0.533,
+                            0.340, 0.340, 0.407, 0.407, 0.533, 0.533,
+                            0.533, 0.600, 0.533, 0.600, 0.533, 0.533,
+                            0.340, 0.130, 0.340, 0.210, 0.533, 0.533,
+                            0.340, 0.130, 0.407, 0.407, 0.407, 0.407]
+ub = [                      0.850, 0.850, 1.333, 1.333, 2.000, 2.000,
+                            1.017, 1.017, 2.000, 2.000, 2.000, 2.000,
+                            2.000, 2.000, 2.000, 2.000, 2.000, 2.000,
+                            2.000, 2.000, 1.017, 1.017, 1.017, 1.017,
+                            2.000, 2.000, 2.000, 2.000, 2.000, 2.000,
+                            1.400, 2.000, 2.000, 0.500, 2.000, 2.000,
+                            0.500, 2.000, 2.000, 2.000, 2.000, 2.000,
+                            2.000, 2.000, 2.000, 2.000, 0.850, 0.850,
+                            1.333, 1.333, 0.850, 0.850, 1.333, 1.333,
+                            0.850, 0.850, 0.850, 0.850, 0.850, 0.850,
+                            0.850, 0.850, 0.850, 0.850, 1.333, 1.333,
+                            0.850, 0.850, 1.017, 1.017, 1.333, 1.333,
+                            1.333, 0.700, 1.333, 0.700, 1.333, 1.333,
+                            0.850, 0.147, 0.850, 0.241, 1.333, 1.333,
+                            0.850, 0.147, 1.017, 1.017, 1.017, 1.017 ]
 ```
-
-TDS values remain continuous in the supplied code.
-
 ---
 
 ## 4. Relay operating characteristics
@@ -1088,48 +1058,6 @@ Remove one extension in the filename template.
 
 ---
 
-## 22. Recommended publication package
-
-```text
-Problem4-90Relay-Reproducibility/
-│
-├── README.md
-├── requirements.txt
-├── LICENSE
-├── CITATION.cff
-│
-├── src/
-│   ├── COCSOS_90Relay_NI.py
-│   ├── COCSOS_90Relay_VI.py
-│   ├── COCSOS_90Relay_EI.py
-│   ├── COCSOS_90Relay_Adaptive.py
-│   └── COCSOS_90Relay_Hybrid.py
-│
-├── data/
-│   ├── near_fault_currents.xlsx
-│   ├── mid_fault_currents.xlsx
-│   ├── far_fault_currents.xlsx
-│   ├── backup_currents.xlsx
-│   ├── primary_backup_pairs.xlsx
-│   ├── relay_weights.xlsx
-│   ├── ps_bounds.xlsx
-│   └── data_dictionary.xlsx
-│
-├── seeds/
-│   └── Problem4_Run_Function_Seeds.xlsx
-│
-├── results/
-│   ├── NI/
-│   ├── VI/
-│   ├── EI/
-│   ├── Adaptive/
-│   └── Hybrid/
-│
-└── analysis/
-    ├── aggregate_results.py
-    ├── statistical_tests.py
-    └── generate_figures.py
-```
 
 ---
 
@@ -1149,35 +1077,9 @@ When using this code or dataset, cite the associated paper:
 }
 ```
 
-Software citation template:
-
-```bibtex
-@software{Dang_COCSOS_90Relay,
-  author  = {Dang, Tuan Khanh and Huynh, Nhat Huy and Truong, Khoa Hoang and Vo, Dieu Ngoc},
-  title   = {COCSOS source code for 90-relay coordination under NI, VI, EI, Adaptive, and Hybrid characteristics},
-  year    = {[Year]},
-  version = {1.0.0},
-  doi     = {[Software DOI]}
-}
-```
 
 ---
 
-## 24. License
-
-Add an open-source license before publishing the repository.
-
-Possible choices:
-
-- MIT License;
-- BSD 3-Clause License;
-- GNU GPL-3.0.
-
-A separate data license may be used, such as:
-
-```text
-CC BY 4.0
-```
 
 ---
 
