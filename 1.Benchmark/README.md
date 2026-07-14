@@ -46,76 +46,8 @@ The active configuration in the supplied code is:
 | Chaotic local-search limit | 20 |
 | Probability of applying the CO phase | 0.4 |
 | Output prefix | `COCSOS_runs_seed_protocol_50dim` |
-
-The shifted function implemented in the code is:
-
-\[
-f(\mathbf{x}) =
-39.16616572302271D
-+
-\frac{1}{2}
-\sum_{i=1}^{D}
-\left(x_i^4-16x_i^2+5x_i\right),
-\]
-
-where \(D=50\). The additive offset shifts the known global minimum to approximately zero.
-
 ---
-
-## 3. Algorithm components
-
-The implementation combines the three original SOS interaction phases with two additional mechanisms.
-
-### Original SOS phases
-
-1. Mutualism
-2. Commensalism
-3. Parasitism
-
-### Additional COCSOS mechanisms
-
-- **Comprehensive Opposition (CO)**  
-  Generates alternative organisms using REO, QR, QO, or EO strategies. The strategy probabilities change according to the iteration ratio.
-
-- **Chaotic Local Search (CLS)**  
-  Uses a logistic map and population-based perturbation around the current best solution.
-
-All generated solutions are clipped to the specified lower and upper bounds.
-
----
-
-## 4. File preparation
-
-Place the Python source file in the repository root and rename it to a descriptive filename, for example:
-
-```text
-COCSOS_Benchmark_Problem1.py
-```
-
-Recommended directory:
-
-```text
-COCSOS-Benchmark-Problem1/
-├── COCSOS_Benchmark_Problem1.py
-├── README.md
-└── requirements.txt
-```
-
-A larger reproducibility repository may use:
-
-```text
-COCSOS-Benchmark-Problem1/
-├── src/
-│   └── COCSOS_Benchmark_Problem1.py
-├── results/
-├── README.md
-├── requirements.txt
-└── LICENSE
-```
-
----
-
-## 5. Software requirements
+## 4. Software requirements
 
 Recommended environment:
 
@@ -144,7 +76,7 @@ openpyxl
 
 ---
 
-## 6. How to run
+## 5. How to run
 
 Open a terminal in the folder containing the Python file.
 
@@ -152,12 +84,6 @@ Open a terminal in the folder containing the Python file.
 
 ```bash
 python COCSOS_Benchmark_Problem1.py
-```
-
-### Linux or macOS
-
-```bash
-python3 COCSOS_Benchmark_Problem1.py
 ```
 
 The script automatically:
@@ -180,9 +106,9 @@ Algorithm finished in ... seconds.
 
 ---
 
-## 7. Output files
+## 6. Output files
 
-### 7.1 Individual-run workbooks
+### 6.1 Individual-run workbooks
 
 For each run, the program creates:
 
@@ -245,7 +171,7 @@ Stores the convergence history:
 
 ---
 
-### 7.2 Combined summary workbook
+### 6.2 Combined summary workbook
 
 After all runs are completed, the script creates:
 
@@ -265,7 +191,7 @@ The `Function_Seeds` sheet is the main seed table intended for reuse by the orig
 
 ---
 
-## 8. Random-seed protocol
+## 7. Random-seed protocol
 
 For every `Run–Function` pair, the program generates one integer seed and then resets:
 
@@ -306,7 +232,7 @@ For full experiment-level reproducibility, either:
 
 ---
 
-## 9. Initial population and fair comparison
+## 8. Initial population and fair comparison
 
 For a fixed combination of:
 
@@ -337,7 +263,7 @@ The per-run `*_InitOF` sheet allows users to verify the complete initial populat
 
 ---
 
-## 10. Changing the number of runs or algorithm settings
+## 9. Changing the number of runs or algorithm settings
 
 Edit the main block:
 
@@ -353,7 +279,7 @@ if __name__ == "__main__":
     )
 ```
 
-## 11. Activating another benchmark function
+## 10. Activating another benchmark function
 
 The active functions are controlled by the `functions` dictionary.
 To run several functions in the same experiment:
@@ -370,7 +296,7 @@ When several functions are active, the script assigns a separate seed to every `
 
 ---
 
-## 12. Citation
+## 11. Citation
 
 When this code is used, please cite the associated paper:
 
@@ -385,19 +311,7 @@ When this code is used, please cite the associated paper:
   doi     = {[DOI]}
 }
 ```
-
-After the software is archived on Zenodo, add the software citation:
-
-```bibtex
-@software{Dang_COCSOS_Benchmark_Code,
-  author  = {Dang, Tuan Khanh and Huynh, Nhat Huy and Truong, Khoa Hoang and Vo, Dieu Ngoc},
-  title   = {COCSOS source code for benchmark-function optimization},
-  year    = {[Year]},
-  version = {1.0.0},
-  doi     = {[Software DOI]}
-}
-```
-## 18. Contact
+## 12. Contact
 
 For questions regarding the code, experimental protocol, or reproduction of the benchmark results, contact:
 
