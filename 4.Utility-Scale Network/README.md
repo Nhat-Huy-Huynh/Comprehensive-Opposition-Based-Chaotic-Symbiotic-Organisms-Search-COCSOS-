@@ -40,7 +40,7 @@ The current implementation contains:
 | Fixed-characteristic decision variables | 180 |
 | Population size | 100 |
 | Maximum iterations | 5000 |
-| Independent runs in the supplied code | 20 |
+| Independent runs  | 50 |
 | CO application probability | 0.4 |
 | Chaotic local-search trials | 20 |
 
@@ -176,7 +176,7 @@ bounds = (0.05, 3)
 pop_size = 100
 max_iter = 5000
 total_dim = 2 * D
-num_runs = 20
+num_runs = 50
 function_name = "COCSOS_VI_110kV"
 ```
 
