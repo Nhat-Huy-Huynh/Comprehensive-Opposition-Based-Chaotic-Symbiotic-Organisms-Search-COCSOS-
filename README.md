@@ -1,5 +1,3 @@
-# Comprehensive-Opposition-Based-Chaotic-Symbiotic-Organisms-Search-COCSOS-
-COCSOS algorithm
 # Efficient Directional Overcurrent Relay Coordination in DG-Integrated Distribution Networks Using a New Symbiotic Organisms Search Variant
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](#requirements)
