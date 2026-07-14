@@ -613,10 +613,11 @@ def COCSOS(obj_func, bounds, dim, pop_size=100, max_iter=3000, seed=None, run=No
             best_sol = improved_sol.copy()
             best_fit = improved_fit
 
-        worst_idx = int(np.argmax(fitness))
-        if fitness[worst_idx] > best_fit:
-            pop[worst_idx] = best_sol.copy()
-            fitness[worst_idx] = best_fit
+        best_idx_now = np.argmin(fitness)
+        if fitness[best_idx_now] < best_fit:
+            best_sol = pop[best_idx_now].copy()
+            best_fit = fitness[best_idx_now]
+        best_fitness_history.append(best_fit)
 
         best_fitness_history.append(float(best_fit))
         if iteration % 100 == 0:
