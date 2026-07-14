@@ -4,7 +4,6 @@ COCSOS algorithm
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](#requirements)
 [![Reproducibility](https://img.shields.io/badge/reproducibility-code%20%2B%20data-brightgreen.svg)](#reproducibility-and-research-data)
-[![License](https://img.shields.io/badge/license-to%20be%20specified-lightgrey.svg)](#license)
 
 ## Authors
 
@@ -455,20 +454,6 @@ For the research dataset:
   doi       = {[Dataset DOI]}
 }
 ```
-
----
-
-## License
-
-The source code is distributed under:
-
-> *[Insert license, for example: MIT License, BSD 3-Clause License, or GPL-3.0]*
-
-The research data may be distributed under:
-
-> *[Insert data license, for example: Creative Commons Attribution 4.0 International]*
-
-Please review the license terms before using or redistributing the code and data.
 
 ---
 
