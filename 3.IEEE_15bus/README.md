@@ -216,16 +216,6 @@ The principal COCSOS settings used in the supplied code are:
 | CLS trial limit | 20 |
 | Coordination interval | 0.2 s |
 
-The COCSOS implementation includes:
-
-- the original SOS interaction phases;
-- the Competitive Opposition mechanism;
-- the Chaotic Local Search mechanism;
-- best-solution tracking;
-- convergence-history recording;
-- seeded population initialization;
-- Excel result export.
-
 ---
 
 ## 6. Software Requirements
