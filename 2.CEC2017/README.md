@@ -35,20 +35,9 @@ The supplied script currently uses the following settings:
 | Maximum iterations | 1000 |
 | CO application probability | 0.4 |
 | Chaotic local-search trials | 20 |
-| Reference global minimum recorded in Excel | 0 |
 | Output prefix | `COCSOS_CEC2017_F1-F10_100dim` |
 
 ---
-
-## 3. COCSOS Components
-
-The implementation contains the three original phases of Symbiotic Organisms Search:
-
-1. **Mutualism**
-2. **Commensalism**
-3. **Parasitism**
-
-It also integrates two additional mechanisms.
 
 ## 5. Requirements
 
