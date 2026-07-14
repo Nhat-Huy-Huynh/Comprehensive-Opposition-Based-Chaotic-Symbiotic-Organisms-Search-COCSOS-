@@ -15,7 +15,8 @@ This repository provides the Python implementation of the **COCSOS** algorithm u
 
 ## 1. Purpose of this code
 
-This program evaluates the proposed **COCSOS** algorithm on continuous benchmark functions. It supports:
+This program evaluates the proposed **COCSOS** algorithm on continuous benchmark functions.
+
 The current script is configured to run **Benchmark Problem 1 only**, namely the shifted **Styblinski–Tang** function.
 ---
 
