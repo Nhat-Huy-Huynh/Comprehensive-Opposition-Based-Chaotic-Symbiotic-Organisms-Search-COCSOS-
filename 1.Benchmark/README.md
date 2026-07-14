@@ -353,90 +353,9 @@ if __name__ == "__main__":
     )
 ```
 
-Examples:
-
-### Ten test runs
-
-```python
-run_all_benchmarks_excel(
-    excel_filename_prefix,
-    num_runs=10,
-    pop_size=50,
-    max_iter=1000,
-)
-```
-
-### Population size of 100
-
-```python
-run_all_benchmarks_excel(
-    excel_filename_prefix,
-    num_runs=50,
-    pop_size=100,
-    max_iter=1000,
-)
-```
-
-### Maximum of 2000 iterations
-
-```python
-run_all_benchmarks_excel(
-    excel_filename_prefix,
-    num_runs=50,
-    pop_size=50,
-    max_iter=2000,
-)
-```
-
-Update the output prefix whenever the experiment configuration changes, for example:
-
-```python
-excel_filename_prefix = "COCSOS_StyblinskiTang_50D_N100_T2000"
-```
-
----
-
 ## 11. Activating another benchmark function
 
 The active functions are controlled by the `functions` dictionary.
-
-Current configuration:
-
-```python
-functions = {
-    "styblinski_tang": (
-        styblinski_tang_function,
-        [-5, 5],
-        0,
-        50
-    )
-}
-```
-
-Each entry follows this format:
-
-```python
-"function_name": (
-    objective_function,
-    [lower_bound, upper_bound],
-    theoretical_global_minimum,
-    dimension
-)
-```
-
-For example, to run the 30-dimensional Ackley function:
-
-```python
-functions = {
-    "ackley": (
-        ackley_function,
-        [-100, 100],
-        0,
-        30
-    )
-}
-```
-
 To run several functions in the same experiment:
 
 ```python
@@ -451,123 +370,7 @@ When several functions are active, the script assigns a separate seed to every `
 
 ---
 
-## 12. Adding a new benchmark function
-
-Define the objective function:
-
-```python
-def new_benchmark_function(x):
-    x = np.asarray(x)
-    return np.sum(x**2)
-```
-
-Then add it to the dictionary:
-
-```python
-functions = {
-    "new_benchmark": (
-        new_benchmark_function,
-        [-100, 100],
-        0,
-        30
-    )
-}
-```
-
-The objective function must:
-
-- accept a one-dimensional NumPy array;
-- return one scalar fitness value;
-- follow a minimization formulation;
-- be valid over the declared search bounds.
-
----
-
-## 13. Using the COCSOS function independently
-
-The optimizer can also be called directly:
-
-```python
-best_solution, best_fitness, runtime, history, initial_info = COCSOS(
-    obj_func=styblinski_tang_function,
-    bounds=[-5, 5],
-    dim=50,
-    pop_size=50,
-    max_iter=1000,
-    seed=123456789,
-)
-```
-
-Returned objects:
-
-| Output | Description |
-|---|---|
-| `best_solution` | Final best decision vector |
-| `best_fitness` | Final best objective value |
-| `runtime` | Elapsed time in seconds |
-| `history` | Best-fitness sequence from iteration 0 to the final iteration |
-| `initial_info` | Seed, complete initial population, initial objective values, and initial best organism |
-
-Example:
-
-```python
-print("Best fitness:", best_fitness)
-print("Best solution:", best_solution)
-print("Runtime:", runtime)
-```
-
----
-
-## 14. Computational considerations
-
-The default experiment performs:
-
-```text
-50 independent runs × 1000 iterations
-```
-
-for a population of 50 organisms. Each iteration contains:
-
-- mutualism updates;
-- commensalism updates;
-- parasitism updates;
-- optional CO population generation;
-- 20 chaotic local-search trials.
-
-Execution time depends on:
-
-- CPU performance;
-- Python and NumPy versions;
-- number and dimension of active functions;
-- population size;
-- maximum iterations;
-- Excel-writing speed.
-
-The code executes runs sequentially and does not use multiprocessing.
-
----
-
-## 15. Recommended publication package
-
-For public release, include:
-
-```text
-COCSOS-Benchmark-Problem1/
-├── COCSOS_Benchmark_Problem1.py
-├── README.md
-├── requirements.txt
-├── LICENSE
-├── results/
-│   └── COCSOS_runs_seed_protocol_50dim_ALL_SUMMARY.xlsx
-└── sample_output/
-    └── COCSOS_runs_seed_protocol_50dim_run_1.xlsx
-```
-
-For complete reproducibility, also publish all per-run workbooks or an equivalent compressed data package.
-
----
-
-## 16. Citation
+## 12. Citation
 
 When this code is used, please cite the associated paper:
 
@@ -594,23 +397,6 @@ After the software is archived on Zenodo, add the software citation:
   doi     = {[Software DOI]}
 }
 ```
-
----
-
-## 17. License
-
-Add the selected open-source license before public release.
-
-Recommended options:
-
-- MIT License;
-- BSD 3-Clause License;
-- GNU GPL-3.0.
-
-Do not publish the repository without a clear license if reuse and redistribution are intended.
-
----
-
 ## 18. Contact
 
 For questions regarding the code, experimental protocol, or reproduction of the benchmark results, contact:
@@ -619,13 +405,3 @@ For questions regarding the code, experimental protocol, or reproduction of the 
 - **Dieu Ngoc Vo** — Corresponding author, *[email to be added]*
 
 ---
-
-## 19. Notes
-
-- The current script minimizes all benchmark functions.
-- The current active experiment is Styblinski–Tang at 50 dimensions.
-- The initial best index is stored in Excel using one-based numbering.
-- The convergence history starts at iteration 0 with the best fitness of the random initial population.
-- The CO population used by COCSOS is generated after the random initial population has been recorded.
-- Excel sheet names are automatically sanitized and truncated to satisfy the 31-character Excel limit.
-- The output files are written to the current working directory unless a path is included in `excel_filename_prefix`.
