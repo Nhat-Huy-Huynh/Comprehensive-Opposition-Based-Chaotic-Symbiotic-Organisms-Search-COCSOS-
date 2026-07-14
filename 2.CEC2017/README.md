@@ -39,7 +39,7 @@ The supplied script currently uses the following settings:
 
 ---
 
-## 5. Requirements
+## 3. Requirements
 
 Recommended environment:
 
@@ -53,8 +53,7 @@ Recommended environment:
 
 ---
 
-
-## 7. How to Run the Default Experiment
+## 4. How to Run the Default Experiment
 
 Open a terminal in the directory containing the source file.
 
@@ -90,7 +89,7 @@ Algorithm finished in ... seconds.
 
 ---
 
-## 8. Main Execution Block
+## 5. Main Execution Block
 
 The default configuration is controlled by:
 
@@ -111,7 +110,7 @@ if __name__ == "__main__":
 ```
 ---
 
-## 9. Running Different Dimensions
+## 6. Running Different Dimensions
 
 ### 10-dimensional experiment
 
@@ -128,9 +127,9 @@ run_multiple_times(
 ```
 ---
 
-## 10. Activating the CEC2017 Function Groups
+## 7. Activating the CEC2017 Function Groups
 
-### 10.1 Simple functions
+### 7.1 Simple functions
 
 The following block is active by default:
 
@@ -150,7 +149,7 @@ for i, f in enumerate(simple_functions):
     )
 ```
 
-### 10.2 Hybrid functions
+### 7.2 Hybrid functions
 
 Uncomment the hybrid block:
 
@@ -170,7 +169,7 @@ for i, f in enumerate(hybrid_functions):
     )
 ```
 
-### 10.3 Composition functions
+### 7.3 Composition functions
 
 Uncomment the composition block:
 
@@ -190,7 +189,7 @@ for i, f in enumerate(composition_functions):
     )
 ```
 
-### 10.4 Running all available groups
+### 7.4 Running all available groups
 
 When all groups are activated, use a matching output prefix:
 
@@ -208,7 +207,7 @@ The exact number of functions depends on the imported `cec2017` package.
 
 ---
 
-## 12. Random-Seed Protocol
+## 8. Random-Seed Protocol
 
 The script creates one seed for each:
 
@@ -252,9 +251,9 @@ rng = np.random.default_rng(2026)
 
 Do not regenerate the seed table when comparing COCSOS with SOS. The comparison algorithm must read the exact saved table.
 
-## 14. Output Files
+## 9. Output Files
 
-### 14.1 One workbook for each run
+### 9.1 One workbook for each run
 
 The default naming format is:
 
@@ -273,7 +272,7 @@ Each workbook contains:
 - one `*_InitOF` sheet for each active function;
 - one convergence-history sheet for each active function.
 
-### 14.2 Combined summary workbook
+### 9.2 Combined summary workbook
 
 After all runs are completed, the script creates:
 
@@ -291,7 +290,7 @@ This workbook contains:
 
 ---
 
-## 17. Calling COCSOS Directly
+## 10. Calling COCSOS Directly
 
 The optimizer can be called independently of the Excel experiment runner:
 
@@ -307,7 +306,7 @@ best_solution, best_fitness, runtime, history, initial_info = COCSOS(
 ```
 ---
 
-## 23. Citation
+## 11. Citation
 
 When using this code, please cite the associated paper:
 
