@@ -291,76 +291,6 @@ This workbook contains:
 
 ---
 
-## 15. Excel Sheet Descriptions
-
-### `Summary`
-
-Contains one row for every active function in the current run:
-
-| Column | Description |
-|---|---|
-| Algorithm | Algorithm name |
-| Run | Independent-run index |
-| Function | CEC2017 function identifier |
-| Seed | Seed assigned to the `Run–Function` pair |
-| Dimension | Number of decision variables |
-| Bounds | Search interval |
-| Pop Size | Population size |
-| Max Iter | Maximum iterations |
-| Initial Best Index | One-based index of the best initial organism |
-| Initial Best OF | Best objective value before CO |
-| Initial Best Individual | Best initial decision vector |
-| Best Solution | Final best decision vector |
-| Best Fitness | Final best objective value |
-| Theoretical Global Min | Reference minimum entered in the code |
-| Running Time (s) | Elapsed optimization time |
-
-### `Seed_Protocol`
-
-Records the seed and experiment settings for every function in the current run.
-
-### `Experiment_Info`
-
-Describes:
-
-- algorithm name;
-- benchmark suite;
-- number of runs;
-- population size;
-- maximum iterations;
-- seed source;
-- seed protocol;
-- random libraries reset;
-- initial-population recording;
-- reproducibility conditions.
-
-### `<function>_InitOF`
-
-Stores:
-
-- run number;
-- function name;
-- seed;
-- organism index;
-- initial objective value;
-- all decision variables `x1, x2, ..., xD`.
-
-### `<function>`
-
-Stores the convergence history:
-
-| Iteration | Meaning |
-|---:|---|
-| 0 | Best fitness in the original random population before CO |
-| 1 | Best fitness after iteration 1 |
-| ... | ... |
-| 1000 | Final best fitness |
-
-### `Function_Seeds`
-
-This is the primary table to be reused by SOS or other comparison algorithms.
-
-
 ## 17. Calling COCSOS Directly
 
 The optimizer can be called independently of the Excel experiment runner:
@@ -375,25 +305,6 @@ best_solution, best_fitness, runtime, history, initial_info = COCSOS(
     seed=123456789,
 )
 ```
-
-Returned objects:
-
-| Output | Description |
-|---|---|
-| `best_solution` | Final best vector |
-| `best_fitness` | Final best objective value |
-| `runtime` | Elapsed time in seconds |
-| `history` | Best-fitness sequence from iteration 0 onward |
-| `initial_info` | Seed, initial population, initial objective values, and initial best organism |
-
-Example:
-
-```python
-print("Best fitness:", best_fitness)
-print("Best solution:", best_solution)
-print("Runtime:", runtime)
-```
-
 ---
 
 ## 23. Citation
