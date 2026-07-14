@@ -16,16 +16,7 @@ This repository provides the Python implementation of the **COCSOS** algorithm u
 ## 1. Purpose of this code
 
 This program evaluates the proposed **COCSOS** algorithm on continuous benchmark functions. It supports:
-
-- repeated independent runs;
-- one recorded random seed for each `Run–Function` pair;
-- export of the initial random population and its objective values;
-- export of convergence history;
-- export of the best solution, best fitness, and runtime;
-- generation of an Excel seed table that can later be reused by the original SOS algorithm for a fair comparison.
-
 The current script is configured to run **Benchmark Problem 1 only**, namely the shifted **Styblinski–Tang** function.
-
 ---
 
 ## 2. Current experiment configuration
@@ -57,23 +48,6 @@ Recommended environment:
 - SciPy
 - OpenPyXL
 
-Install the required packages with:
-
-```bash
-pip install numpy pandas scipy openpyxl
-```
-
-A suitable `requirements.txt` is:
-
-```text
-numpy
-pandas
-scipy
-openpyxl
-```
-
-> `scipy.stats.qmc` and `math` are imported in the current script but are not used by the active experiment.
-
 ---
 
 ## 5. How to run
@@ -85,14 +59,6 @@ Open a terminal in the folder containing the Python file.
 ```bash
 python COCSOS_Benchmark_Problem1.py
 ```
-
-The script automatically:
-
-1. creates a seed table;
-2. runs the active benchmark function 50 times;
-3. resets both NumPy and Python random generators before each run;
-4. stores detailed results for every run;
-5. creates one combined summary workbook.
 
 During execution, the terminal prints information such as:
 
@@ -106,92 +72,7 @@ Algorithm finished in ... seconds.
 
 ---
 
-## 6. Output files
-
-### 6.1 Individual-run workbooks
-
-For each run, the program creates:
-
-```text
-COCSOS_runs_seed_protocol_50dim_run_1.xlsx
-COCSOS_runs_seed_protocol_50dim_run_2.xlsx
-...
-COCSOS_runs_seed_protocol_50dim_run_50.xlsx
-```
-
-Each workbook contains the following sheets.
-
-#### `Summary`
-
-Stores:
-
-- algorithm name;
-- run number;
-- benchmark name;
-- random seed;
-- dimension and bounds;
-- population size;
-- maximum iterations;
-- best initial organism;
-- best initial objective value;
-- final best solution;
-- final best fitness;
-- theoretical global minimum;
-- elapsed runtime.
-
-#### `Seed_Protocol`
-
-Stores the seed and experiment settings for the current run and function.
-
-#### `Experiment_Info`
-
-Describes the number of runs, population size, maximum iterations, seed protocol, and random libraries that are reset.
-
-#### `styblinski_tang_InitOF`
-
-Stores the complete initial random population:
-
-- 50 organisms;
-- 50 decision variables per organism;
-- initial objective value of every organism;
-- run number;
-- function name;
-- seed.
-
-#### `styblinski_tang`
-
-Stores the convergence history:
-
-| Iteration | Best Fitness |
-|---:|---:|
-| 0 | Best fitness of the random initial population |
-| 1 | Best fitness after iteration 1 |
-| ... | ... |
-| 1000 | Final best fitness |
-
----
-
-### 6.2 Combined summary workbook
-
-After all runs are completed, the script creates:
-
-```text
-COCSOS_runs_seed_protocol_50dim_ALL_SUMMARY.xlsx
-```
-
-This workbook contains:
-
-- `All_Summary`
-- `Seed_Protocol`
-- `Function_Seeds`
-- `Run_Function_Seeds`
-- `Experiment_Info`
-
-The `Function_Seeds` sheet is the main seed table intended for reuse by the original SOS algorithm.
-
----
-
-## 7. Random-seed protocol
+## 6. Random-seed protocol
 
 For every `Run–Function` pair, the program generates one integer seed and then resets:
 
@@ -232,7 +113,7 @@ For full experiment-level reproducibility, either:
 
 ---
 
-## 8. Initial population and fair comparison
+## 7. Initial population and fair comparison
 
 For a fixed combination of:
 
@@ -263,7 +144,7 @@ The per-run `*_InitOF` sheet allows users to verify the complete initial populat
 
 ---
 
-## 9. Changing the number of runs or algorithm settings
+## 8. Changing the number of runs or algorithm settings
 
 Edit the main block:
 
@@ -279,7 +160,7 @@ if __name__ == "__main__":
     )
 ```
 
-## 10. Activating another benchmark function
+## 9. Activating another benchmark function
 
 The active functions are controlled by the `functions` dictionary.
 To run several functions in the same experiment:
@@ -296,7 +177,7 @@ When several functions are active, the script assigns a separate seed to every `
 
 ---
 
-## 11. Citation
+## 10. Citation
 
 When this code is used, please cite the associated paper:
 
@@ -311,7 +192,7 @@ When this code is used, please cite the associated paper:
   doi     = {[DOI]}
 }
 ```
-## 12. Contact
+## 11. Contact
 
 For questions regarding the code, experimental protocol, or reproduction of the benchmark results, contact:
 
