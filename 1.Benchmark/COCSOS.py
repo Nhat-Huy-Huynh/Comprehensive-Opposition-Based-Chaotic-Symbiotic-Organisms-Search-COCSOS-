@@ -625,6 +625,7 @@ def COCSOS(obj_func, bounds, dim, pop_size=50, max_iter=1000, seed=None):
 
         # Cập nhật best solution trước khi Chaotic Local Search
         best_idx = np.argmin(fitness)
+        pre_cls_best_idx = np.argmin(fitness)
         if fitness[best_idx] < best_fit:
             best_sol = pop[best_idx].copy()
             best_fit = fitness[best_idx]
@@ -634,6 +635,9 @@ def COCSOS(obj_func, bounds, dim, pop_size=50, max_iter=1000, seed=None):
             best_sol, best_fit, pop, obj_func, lb, ub, local_search_limit=20
         )
         if improved_fit < best_fit:
+            idx = pre_cls_best_idx        
+            pop[idx] = improved_sol
+            fitness[idx] = improved_fit
             best_sol = improved_sol.copy()
             best_fit = improved_fit
 

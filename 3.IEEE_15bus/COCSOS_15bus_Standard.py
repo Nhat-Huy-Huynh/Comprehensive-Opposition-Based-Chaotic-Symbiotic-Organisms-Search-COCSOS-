@@ -43,6 +43,7 @@ CTI = 0.2
 def time_operation(TDS, Ipickup, I):
     ratio = I / Ipickup
     return TDS * (80/ (ratio**2- 1))
+# Thay đổi hệ số để chọn đặc tính NI/VI/EI
 
 def get_backup_current(primary_idx, count):
     backup_data = I_data_backup[primary_idx]
@@ -519,22 +520,26 @@ def COCSOS(obj_func, bounds, dim, pop_size=100, max_iter=3000, seed=None, run=No
             pop = combined[best_indices]
             fitness = fitness_combined[best_indices]
 
+        # Cập nhật best solution trước khi Chaotic Local Search
         best_idx = np.argmin(fitness)
+        pre_cls_best_idx = np.argmin(fitness)
         if fitness[best_idx] < best_fit:
             best_sol = pop[best_idx].copy()
-            best_fit = float(fitness[best_idx])
+            best_fit = fitness[best_idx]
 
         # ============= Chaotic Local Search =============
         improved_sol, improved_fit = chaotic_local_search(best_sol, best_fit, pop, obj_func, lb, ub, local_search_limit=20)
         if improved_fit < best_fit:
+            idx = pre_cls_best_idx        
+            pop[idx] = improved_sol
+            fitness[idx] = improved_fit
             best_sol = improved_sol.copy()
-            best_fit = float(improved_fit)
+            best_fit = improved_fit
 
-        worst_idx = np.argmax(fitness)
-        if fitness[worst_idx] > best_fit:
-            pop[worst_idx] = best_sol.copy()
-            fitness[worst_idx] = best_fit
-
+        best_idx_now = np.argmin(fitness)
+        if fitness[best_idx_now] < best_fit:
+            best_sol = pop[best_idx_now].copy()
+            best_fit = fitness[best_idx_now]
         best_fitness_history.append(best_fit)
 
         if iteration % 100 == 0:

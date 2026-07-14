@@ -597,16 +597,21 @@ def COCSOS(obj_func, bounds, dim, pop_size=100, max_iter=3000, seed=None, run=No
             pop = combined[best_indices]
             fitness = fitness_combined[best_indices]
 
-        best_idx = int(np.argmin(fitness))
+        # Cập nhật best solution trước khi Chaotic Local Search
+        best_idx = np.argmin(fitness)
+        pre_cls_best_idx = np.argmin(fitness)
         if fitness[best_idx] < best_fit:
             best_sol = pop[best_idx].copy()
-            best_fit = float(fitness[best_idx])
+            best_fit = fitness[best_idx]
 
         # Chaotic Local Search
         improved_sol, improved_fit = chaotic_local_search(best_sol,best_fit,pop,obj_func,lb,ub,local_search_limit=20)
         if improved_fit < best_fit:
+            idx = pre_cls_best_idx        
+            pop[idx] = improved_sol
+            fitness[idx] = improved_fit
             best_sol = improved_sol.copy()
-            best_fit = float(improved_fit)
+            best_fit = improved_fit
 
         worst_idx = int(np.argmax(fitness))
         if fitness[worst_idx] > best_fit:
@@ -621,7 +626,6 @@ def COCSOS(obj_func, bounds, dim, pop_size=100, max_iter=3000, seed=None, run=No
     print_detailed_results(best_sol, best_fit)
     print(f"Algorithm finished in {elapsed_time:.4f} seconds.")
     return best_sol, float(best_fit), elapsed_time, best_fitness_history, initial_info
-
 
 # ------------------ Hàm xuất kết quả ra Excel ------------------
 def export_results_to_excel(

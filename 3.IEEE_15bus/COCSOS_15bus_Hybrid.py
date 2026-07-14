@@ -363,7 +363,7 @@ def co_population(pop, lb, ub, iteration, max_iter):
     else:
         P_reo = 0.01
         P_qr = -0.42 + 1.92 * ratio
-        P_qo = 1.41 - 1.92 * ratio
+        P_qo = 1.40 - 1.92 * ratio
 
     for i in range(pop_size):
         x = pop[i]
@@ -553,7 +553,7 @@ def COCSOS(obj_func, bounds, dim, pop_size=100, max_iter=3000, seed=None, run=No
                 fitness[host_idx] = parasite_fit
 
         # Opposition Phase using Comprehensive Opposition
-        if np.random.rand() < 0.2:
+        if np.random.rand() < 0.4:
             co_pop2 = co_population(pop, lb, ub, iteration, max_iter)
             combined = np.vstack((pop, co_pop2))
             fitness_combined = np.array([obj_func(ind) for ind in combined], dtype=float)
@@ -561,22 +561,26 @@ def COCSOS(obj_func, bounds, dim, pop_size=100, max_iter=3000, seed=None, run=No
             pop = combined[best_indices]
             fitness = fitness_combined[best_indices]
 
-        best_idx = int(np.argmin(fitness))
+        # Cập nhật best solution trước khi Chaotic Local Search
+        best_idx = np.argmin(fitness)
+        pre_cls_best_idx = np.argmin(fitness)
         if fitness[best_idx] < best_fit:
             best_sol = pop[best_idx].copy()
-            best_fit = float(fitness[best_idx])
+            best_fit = fitness[best_idx]
 
         # Chaotic Local Search
         improved_sol, improved_fit = chaotic_local_search(best_sol, best_fit, pop, obj_func, lb, ub, local_search_limit=20)
         if improved_fit < best_fit:
+            idx = pre_cls_best_idx        
+            pop[idx] = improved_sol
+            fitness[idx] = improved_fit
             best_sol = improved_sol.copy()
-            best_fit = float(improved_fit)
+            best_fit = improved_fit
 
         best_idx = int(np.argmin(fitness))
         if fitness[best_idx] < best_fit:
             best_sol = pop[best_idx].copy()
             best_fit = float(fitness[best_idx])
-
         best_fitness_history.append(float(best_fit))
         history_stage.append("COCSOS iteration")
 
