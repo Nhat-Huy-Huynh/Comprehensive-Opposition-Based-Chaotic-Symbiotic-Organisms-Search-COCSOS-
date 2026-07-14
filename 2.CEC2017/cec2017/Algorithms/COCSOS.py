@@ -424,7 +424,7 @@ def run_qocsos_for_all(
     seed_table,
     pop_size=50,
     max_iter=1000,
-    excel_filename_prefix="COCSOS_CEC2017_F1-F30_30dim",
+    excel_filename_prefix="COCSOS_CEC2017_F1-F30_10dim",
     experiment_info_df=None,
 ):
     results = []
@@ -524,7 +524,7 @@ def run_multiple_times(
     n_runs=50,
     pop_size=50,
     max_iter=1000,
-    excel_filename_prefix="COCSOS_CEC2017_F1-F10_100dim",
+    excel_filename_prefix="COCSOS_CEC2017_F1-F10_10dim",
 ):
     function_names = list(functions.keys())
 
