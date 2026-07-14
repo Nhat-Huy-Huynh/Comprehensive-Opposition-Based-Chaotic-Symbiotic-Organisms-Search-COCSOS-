@@ -72,32 +72,9 @@ The pickup current of relay $i$ is calculated from its Plug Setting and CT ratio
 $$
 I_{\mathrm{pickup},i}=PS_i \times CT_i
 $$
-
-The TDS and PS values must remain within their corresponding limits throughout the optimization process.
-
-> **Implementation note:** If the optimizer is called with a single common argument such as `bounds=(0.1, 1.1)`, the PS range of 0.5–2.5 must be handled through the solution-decoding, scaling, or objective-evaluation procedure implemented in the source code.
-
 ---
 
 ## 4. Relay Operating Characteristics
-
-The general inverse-time relay operating-time equation is:
-
-$$
-t_i
-=
-TDS_i
-\frac{A_i}
-{\left(\frac{I_i}{I_{\mathrm{pickup},i}}\right)^{B_i}-1}
-$$
-
-where:
-
-- $t_i$ is the relay operating time;
-- $TDS_i$ is the Time Dial Setting;
-- $I_i$ is the fault current observed by relay $i$;
-- $I_{\mathrm{pickup},i}$ is the pickup current;
-- $A_i$ and $B_i$ are the relay-characteristic constants.
 
 ### 4.1. NI Case
 
@@ -105,16 +82,6 @@ For the Normal Inverse characteristic:
 
 $$
 A=0.14,\qquad B=0.02
-$$
-
-The corresponding operating-time equation is:
-
-$$
-t
-=
-TDS
-\frac{0.14}
-{\left(\frac{I}{I_{\mathrm{pickup}}}\right)^{0.02}-1}
 $$
 
 Python implementation:
@@ -133,16 +100,6 @@ For the Very Inverse characteristic:
 
 $$
 A=13.5,\qquad B=1
-$$
-
-The corresponding operating-time equation is:
-
-$$
-t
-=
-TDS
-\frac{13.5}
-{\left(\frac{I}{I_{\mathrm{pickup}}}\right)-1}
 $$
 
 Python implementation:
@@ -165,14 +122,6 @@ $$
 
 The corresponding operating-time equation is:
 
-$$
-t
-=
-TDS
-\frac{80}
-{\left(\frac{I}{I_{\mathrm{pickup}}}\right)^2-1}
-$$
-
 Python implementation:
 
 ```python
@@ -186,16 +135,6 @@ def time_operation(TDS, Ipickup, I):
 ### 4.4. Adaptive Case
 
 The Adaptive case must use the adaptive characteristic formulation defined in the manuscript and its dedicated source file.
-
-The relay operating time is calculated as:
-
-$$
-t_i
-=
-TDS_i
-\frac{A_i}
-{\left(\frac{I_i}{I_{\mathrm{pickup},i}}\right)^{B_i}-1}
-$$
 
 In this case, $A_i$ and $B_i$ are optimized together with the relay settings.
 
@@ -238,16 +177,6 @@ decision variables, consisting of:
 
 The exact encoding and decoding rules must follow the validated Hybrid implementation. The characteristic-selection variables must be discretized before objective-function evaluation.
 
-A typical decoding instruction is:
-
-```python
-curve_code = np.clip(
-    np.rint(curve_variable),
-    1,
-    3
-).astype(int)
-```
-
 The decoding rule is:
 
 ```text
@@ -272,195 +201,8 @@ excel_filename_prefix = (
 )
 ```
 
-The Hybrid Excel output should additionally include:
-
-- selected characteristic for every relay;
-- encoded characteristic value;
-- number of NI relays;
-- number of VI relays;
-- number of EI relays;
-- operating-time constants $A_i$ and $B_i$;
-- characteristic-encoding and decoding rules.
-
-> **Important:** The supplied EI source file contains only $2D$ variables and does not implement Adaptive or Hybrid encoding. Separate validated code versions are required for these two cases.
-
 ---
-
-## 5. Objective Function
-
-The objective function minimizes the total primary-relay operating time together with constraint penalties:
-
-$$
-F(\mathbf{x})
-=
-\sum_{i=1}^{D}t_i
-+
-P_{\mathrm{primary}}
-+
-P_{\mathrm{CTI}}
-$$
-
-The reported `Best Fitness` is therefore the penalized objective-function value, not necessarily the unpenalized sum of primary-relay operating times.
-
-### 5.1. Total Primary-Relay Operating Time
-
-The main objective component is:
-
-$$
-F_{\mathrm{primary}}
-=
-\sum_{i=1}^{D}t_i
-$$
-
-Python implementation:
-
-```python
-primary_obj = sum(primary_times)
-```
-
----
-
-### 5.2. Minimum Primary Operating-Time Constraint
-
-Each primary relay must satisfy:
-
-$$
-t_i\geq0.015\ \mathrm{s}
-$$
-
-A violation occurs when:
-
-$$
-t_i<0.015\ \mathrm{s}
-$$
-
-The corresponding penalty is:
-
-$$
-P_{\mathrm{primary}}
-=
-56000
-\sum_{i=1}^{D}
-\left[
-\max\left(0,\ 0.015-t_i\right)
-\right]^2
-$$
-
-Python implementation:
-
-```python
-primary_penalty = 56000 * sum(
-    max(0.0, 0.015 - t_i) ** 2
-    for t_i in primary_times
-)
-```
-
----
-
-### 5.3. Primary–Backup Coordination Constraint
-
-For every primary–backup relay pair $k$, the following constraint must be satisfied:
-
-$$
-t_{\mathrm{backup},k}
--
-t_{\mathrm{primary},k}
-\geq CTI
-$$
-
-The coordination time interval is:
-
-$$
-CTI=0.2\ \mathrm{s}
-$$
-
-The coordination violation of pair $k$ is:
-
-$$
-v_k
-=
-\max
-\left(
-0,\ 
-CTI-
-\left[
-t_{\mathrm{backup},k}
--
-t_{\mathrm{primary},k}
-\right]
-\right)
-$$
-
-The coordination penalty is:
-
-$$
-P_{\mathrm{CTI}}
-=
-500
-\sum_{k=1}^{82}
-v_k^2
-$$
-
-Equivalently:
-
-$$
-P_{\mathrm{CTI}}
-=
-500
-\sum_{k=1}^{82}
-\left[
-\max
-\left(
-0,\ 
-CTI-
-\left[
-t_{\mathrm{backup},k}
--
-t_{\mathrm{primary},k}
-\right]
-\right)
-\right]^2
-$$
-
-Python implementation:
-
-```python
-cti_penalty = 500 * sum(
-    max(
-        0.0,
-        CTI - (t_backup - t_primary)
-    ) ** 2
-    for t_primary, t_backup in coordination_times
-)
-```
-
----
-
-### 5.4. Final Penalized Objective
-
-The final fitness value is calculated as:
-
-$$
-F
-=
-F_{\mathrm{primary}}
-+
-P_{\mathrm{primary}}
-+
-P_{\mathrm{CTI}}
-$$
-
-Python implementation:
-
-```python
-fitness = primary_obj + primary_penalty + cti_penalty
-```
-
-A solution with a small total primary operating time may still have a large fitness value if it violates the minimum-time or coordination constraints.
-
----
-
-## 6. COCSOS Parameters
+## 5. COCSOS Parameters
 
 The principal COCSOS settings used in the supplied code are:
 
@@ -485,7 +227,7 @@ The COCSOS implementation includes:
 
 ---
 
-## 7. Software Requirements
+## 6. Software Requirements
 
 Recommended environment:
 
@@ -496,71 +238,7 @@ Recommended environment:
 
 ---
 
-## 8. Installation
-
-Install the required dependencies with:
-
-```bash
-pip install numpy pandas openpyxl
-```
-
-To verify the Python version:
-
-```bash
-python --version
-```
-
-To verify the installed packages:
-
-```bash
-pip show numpy pandas openpyxl
-```
-
----
-
-## 9. Running the Code
-
-Place the selected Python source file in the working directory and run:
-
-```bash
-python your_script_name.py
-```
-
-For example:
-
-```bash
-python COCSOS_Problem3_EI.py
-```
-
-Each characteristic case should use:
-
-- its own validated source file;
-- its own output filename prefix;
-- the appropriate objective-function implementation;
-- the same published or reused seed table when conducting a fair comparison.
-
----
-
-## 10. Recommended Run Order
-
-Use the following order:
-
-```text
-NI → VI → EI → Adaptive → Hybrid
-```
-
-This order follows the progression from fixed standard characteristics to more flexible characteristic models.
-
-The order does not affect the optimization results when:
-
-- each case uses the correctly assigned seed table;
-- random generators are reset before initialization;
-- output filenames are separated;
-- no result file from one case overwrites another case.
-
----
-
-## 11. Seed Protocol Across the Five Cases
+## 7. Seed Protocol Across the Five Cases
 
 The source code assigns one seed to each independent run:
 
@@ -580,59 +258,7 @@ random.seed(seed)
 
 This ensures that the population generated for a run can be reproduced when the same seed, dimensionality, population size, variable bounds, and initialization procedure are used.
 
-### 11.1. Master Seed
-
-The supplied source code uses:
-
-```python
-master_seed = None
-```
-
-Therefore, each complete program execution generates a new seed table.
-
-For publication-level reproducibility, use one of the following approaches.
-
-#### Option 1: Publish and reuse the generated seed table
-
-Save the generated seeds in the `Run_Seeds` worksheet and use the same seed table for all five cases.
-
-#### Option 2: Use a fixed master seed
-
-For example:
-
-```python
-master_seed = 2026
-```
-
-The fixed master seed allows the run-seed table to be regenerated deterministically.
-
----
-
-### 11.2. Fair Comparison Between Cases
-
-For a controlled comparison among NI, VI, EI, Adaptive, and Hybrid, the seed assigned to each run should be kept the same:
-
-```text
-NI Run 1       → Seed S1
-VI Run 1       → Seed S1
-EI Run 1       → Seed S1
-Adaptive Run 1 → Seed S1
-Hybrid Run 1   → Seed S1
-```
-
-The same rule should be applied from Run 1 to Run 50.
-
-However, using the same seed does not always produce numerically identical initial populations when the cases have different dimensions. For example:
-
-- NI, VI, and EI use $2D=84$ variables;
-- Hybrid uses $3D=126$ variables;
-- Adaptive may use another dimension depending on its encoding.
-
-The common seed still provides a controlled random-number stream, but only cases with identical dimensions, bounds, and initialization procedures can produce identical initial population matrices.
-
----
-
-## 12. Current Official Run Settings
+## 8. Current Official Run Settings
 
 The supplied main block uses:
 
@@ -675,7 +301,7 @@ The Adaptive dimension must follow the validated Adaptive source code.
 
 ---
 
-## 13. Per-Run Output Files
+## 9. Per-Run Output Files
 
 Each case generates one workbook for every independent run.
 
@@ -702,50 +328,7 @@ This prevents workbooks from different characteristic cases from overwriting one
 
 ---
 
-## 14. Recommended Excel Output
-
-Depending on the supplied source-code version, each run workbook should record at least:
-
-- run number;
-- seed;
-- best fitness;
-- total primary operating time;
-- primary operating-time penalty;
-- CTI coordination penalty;
-- optimized TDS values;
-- optimized PS values;
-- pickup currents;
-- primary operating times;
-- backup operating times;
-- primary–backup coordination margins;
-- CTI violations;
-- convergence history;
-- elapsed time;
-- initial population;
-- initial objective-function values.
-
-For the Adaptive case, the workbook should additionally record:
-
-- optimized $A_i$ values;
-- optimized $B_i$ values;
-- $A$ and $B$ bounds;
-- quantization steps;
-- adaptive operating-time equations.
-
-For the Hybrid case, the workbook should additionally record:
-
-- encoded characteristic value for each relay;
-- decoded characteristic name;
-- number of NI relays;
-- number of VI relays;
-- number of EI relays;
-- assigned $A_i$ values;
-- assigned $B_i$ values;
-- characteristic-decoding rule.
-
----
-
-## 15. Input Data Included in the Code
+## 10. Input Data Included in the Code
 
 The source file embeds:
 
@@ -770,7 +353,7 @@ Similarly, every entry in `backup_pairs` must use the same relay-index conventio
 
 ---
 
-## 16. Direct Use of the Optimizer
+## 11. Direct Use of the Optimizer
 
 The fixed-characteristic optimizer can be called directly as follows:
 
@@ -785,114 +368,9 @@ best_solution, best_fitness, elapsed_time, history, initial_info = COCSOS(
     run=1
 )
 ```
-
-The principal returned values are:
-
-| Returned value | Description |
-|---|---|
-| `best_solution` | Best candidate solution found |
-| `best_fitness` | Best penalized objective-function value |
-| `elapsed_time` | Execution time of the run |
-| `history` | Best-fitness convergence history |
-| `initial_info` | Initial population and initial objective information |
-
-For the Hybrid implementation, the dimension must be changed to:
-
-```python
-dim = 3 * D
-```
-
-The direct function call must also use the Hybrid-specific objective and decoding functions.
-
 ---
 
-## 17. Interpreting the Results
-
-The `Best Fitness` value is the penalized objective:
-
-$$
-F
-=
-\sum_{i=1}^{D}t_i
-+
-P_{\mathrm{primary}}
-+
-P_{\mathrm{CTI}}
-$$
-
-Therefore:
-
-$$
-\text{Best Fitness}
-\neq
-\sum_{i=1}^{D}t_i
-$$
-
-whenever any constraint penalty is nonzero.
-
-A feasible solution should satisfy:
-
-$$
-t_i\geq0.015\ \mathrm{s},
-\qquad
-\forall i
-$$
-
-and:
-
-$$
-t_{\mathrm{backup},k}
--
-t_{\mathrm{primary},k}
-\geq0.2\ \mathrm{s},
-\qquad
-\forall k
-$$
-
-For a feasible solution:
-
-$$
-P_{\mathrm{primary}}=0
-$$
-
-and:
-
-$$
-P_{\mathrm{CTI}}=0
-$$
-
-Consequently:
-
-$$
-F
-=
-\sum_{i=1}^{D}t_i
-$$
-
-When reviewing the output, both the best fitness and the unpenalized total operating time should be reported.
-
----
-
-## 18. Reproducibility Checklist
-
-Before publishing or comparing results, verify that:
-
-1. The same run-seed table is used across all compared cases.
-2. Both `numpy.random` and Python `random` are reset before initialization.
-3. NI, VI, and EI use the correct $A$ and $B$ constants.
-4. Adaptive uses its validated $A$- and $B$-optimization mechanism.
-5. Hybrid discretizes characteristic variables before objective evaluation.
-6. TDS and PS values remain within their prescribed bounds.
-7. The number of primary–backup pairs is 82.
-8. The coordination interval is 0.2 s.
-9. Each case has a separate output filename prefix.
-10. The generated seed table is saved with the experimental results.
-11. The initial population and initial objective-function values are retained.
-12. The best fitness is distinguished from the unpenalized total operating time.
-
----
-
-## 19. Citation
+## 12. Citation
 
 When using this code or dataset, cite the associated paper:
 
@@ -912,7 +390,7 @@ Replace the placeholder publication information after the final bibliographic da
 
 ---
 
-## 20. Contact
+## 13. Contact
 
 For questions regarding the source code, experimental protocol, or reproduction of the relay-coordination results, contact:
 
