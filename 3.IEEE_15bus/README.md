@@ -72,6 +72,7 @@ The pickup current of relay $i$ is calculated from its Plug Setting and CT ratio
 $$
 I_{\mathrm{pickup},i}=PS_i \times CT_i
 $$
+
 ---
 
 ## 4. Relay Operating Characteristics
