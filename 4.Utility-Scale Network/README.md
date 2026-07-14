@@ -102,31 +102,7 @@ ub = [                      0.850, 0.850, 1.333, 1.333, 2.000, 2.000,
 
 ## 4. Relay operating characteristics
 
-Let:
-
-\[
-M=\frac{I}{I_{\mathrm{pickup}}}.
-\]
-
-The general IEC inverse-time equation is:
-
-\[
-t=TDS\frac{A}{M^B-1}.
-\]
-
-The supplied code also limits the current ratio to:
-
-\[
-M\leq20.
-\]
-
 ### 4.1 NI case
-
-For Normal Inverse:
-
-\[
-A=0.14,\qquad B=0.02.
-\]
 
 Use:
 
@@ -136,25 +112,9 @@ def time_operation(TDS, Ipickup, I):
     ratio = min(ratio, 20.0)
     return TDS * (0.14 / (ratio**0.02 - 1.0))
 ```
-
-Recommended identifiers:
-
-```python
-function_name = "COCSOS_NI_110kV"
-output_prefix = "COCSOS_OF3_110kV_TDS_newPS_NI"
-```
-
 ---
 
 ### 4.2 VI case
-
-For Very Inverse:
-
-\[
-A=13.5,\qquad B=1.
-\]
-
-This is the characteristic already implemented in the uploaded file:
 
 ```python
 def time_operation(TDS, Ipickup, I):
@@ -162,24 +122,9 @@ def time_operation(TDS, Ipickup, I):
     ratio = min(ratio, 20.0)
     return TDS * (13.5 / (ratio - 1.0))
 ```
-
-Recommended identifiers:
-
-```python
-function_name = "COCSOS_VI_110kV"
-output_prefix = "COCSOS_OF3_110kV_TDS_newPS_VI"
-```
-
 ---
 
 ### 4.3 EI case
-
-For Extremely Inverse:
-
-\[
-A=80,\qquad B=2.
-\]
-
 Use:
 
 ```python
@@ -188,14 +133,6 @@ def time_operation(TDS, Ipickup, I):
     ratio = min(ratio, 20.0)
     return TDS * (80.0 / (ratio**2 - 1.0))
 ```
-
-Recommended identifiers:
-
-```python
-function_name = "COCSOS_EI_110kV"
-output_prefix = "COCSOS_OF3_110kV_TDS_newPS_EI"
-```
-
 ---
 
 ### 4.4 Adaptive case
