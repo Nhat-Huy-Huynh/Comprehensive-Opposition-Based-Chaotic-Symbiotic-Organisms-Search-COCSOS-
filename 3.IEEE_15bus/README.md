@@ -246,6 +246,7 @@ Before population initialization, both random-number generators are reset:
 np.random.seed(seed)
 random.seed(seed)
 ```
+The seed table is saved so that SOS or another comparison algorithm can reuse the same seeds.
 
 This ensures that the population generated for a run can be reproduced when the same seed, dimensionality, population size, variable bounds, and initialization procedure are used.
 
