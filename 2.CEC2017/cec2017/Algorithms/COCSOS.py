@@ -13,6 +13,7 @@ def random_select(pop, i):
     return np.random.choice(candidates)
 
 # ----- Comprehensive Opposition (CO) Population -----
+
 def co_population(pop, lb, ub, iteration, max_iter):
     pop_size, dim = pop.shape
     lb = np.array(lb)
@@ -23,6 +24,7 @@ def co_population(pop, lb, ub, iteration, max_iter):
     # Tính tỉ lệ tiến triển
     ratio = iteration / max_iter
 
+    # Xác định xác suất chọn ứng viên dựa trên kết quả của Table 1:
     if 0 <= ratio <= 0.224:  # Giai đoạn ban đầu: ưu tiên khám phá (QO cao)
         P_reo = 0.01
         P_qr  = 0.01
@@ -31,54 +33,64 @@ def co_population(pop, lb, ub, iteration, max_iter):
         P_reo = 0.01
         P_qr  = 0.97
         P_qo  = 0.01
-    else:                    
+    else:                    # Giai đoạn trung gian: nội suy tuyến tính
         P_reo = 0.01
         P_qr  = -0.42 + 1.92 * ratio
         P_qo  = 1.4 - 1.92 * ratio
-    P_eo = 1 - (P_reo + P_qr + P_qo)
-
+    
     # Duyệt qua từng cá thể trong quần thể
     for i in range(pop_size):
         x = pop[i]
         x_op = lb + ub - x  # Basic Opposite
 
-        chosen = np.zeros(dim)
-        # Sinh ngẫu nhiên và chọn chiến lược cho từng dimension
-        for j in range(dim):
-            r = random.random()
-            if r < P_reo:
-                # REO (Reflected Extended Opposition)
-                if x[j] < c[j]:
-                    x_eo = random.uniform(x_op[j], ub[j])
-                else:
-                    x_eo = random.uniform(lb[j], x_op[j])
-                chosen[j] = lb[j] + ub[j] - x_eo
+        # Sinh ngẫu nhiên để chọn chiến lược
+        r = random.random()
 
-            elif r < P_reo + P_qr:
-                # QR (Quasi-Reflection)
+        if r < P_reo:
+            # CHIẾN LƯỢC REO (Reflected Extended Opposition)
+            x_eo = np.zeros(dim)
+            for j in range(dim):
                 if x[j] < c[j]:
-                    chosen[j] = random.uniform(x[j], c[j])
+                    x_eo[j] = random.uniform(x_op[j], ub[j])
                 else:
-                    chosen[j] = random.uniform(c[j], x[j])
+                    x_eo[j] = random.uniform(lb[j], x_op[j])
+            chosen = lb + ub - x_eo  # x_reo
 
-            elif r < P_reo + P_qr + P_qo:
-                # QO (Quasi-Opposition)
+        elif r < P_reo + P_qr:
+            # CHIẾN LƯỢC QR (Quasi-Reflection)
+            x_qr = np.zeros(dim)
+            for j in range(dim):
                 if x[j] < c[j]:
-                    chosen[j] = random.uniform(c[j], x_op[j])
+                    x_qr[j] = random.uniform(x[j], c[j])
                 else:
-                    chosen[j] = random.uniform(x_op[j], c[j])
+                    x_qr[j] = random.uniform(c[j], x[j])
+            chosen = x_qr
 
-            else:
-                # EO (Extended Opposition)
+        elif r < P_reo + P_qr + P_qo:
+            # CHIẾN LƯỢC QO (Quasi-Opposition)
+            x_qo = np.zeros(dim)
+            for j in range(dim):
                 if x[j] < c[j]:
-                    chosen[j] = random.uniform(x_op[j], ub[j])
+                    x_qo[j] = random.uniform(c[j], x_op[j])
                 else:
-                    chosen[j] = random.uniform(lb[j], x_op[j])
+                    x_qo[j] = random.uniform(x_op[j], c[j])
+            chosen = x_qo
+
+        else:
+            # CHIẾN LƯỢC EO (Extended Opposition)
+            x_eo = np.zeros(dim)
+            for j in range(dim):
+                if x[j] < c[j]:
+                    x_eo[j] = random.uniform(x_op[j], ub[j])
+                else:
+                    x_eo[j] = random.uniform(lb[j], x_op[j])
+            chosen = x_eo
 
         # Ép biên đảm bảo nghiệm nằm trong miền [lb, ub]
         new_pop[i] = np.clip(chosen, lb, ub)
     
     return new_pop
+
 def chaotic_local_search(best_solution, best_fitness, pop, obj_func, lb, ub, local_search_limit=20):
     x = np.random.rand()    
     r = 4.0
